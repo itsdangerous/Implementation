@@ -1,8 +1,10 @@
+package Sort;
+
 import java.io.*;
 import java.util.Arrays;
 import java.util.StringTokenizer;
 
-public class QuickSort_jh_version {
+public class MergeSort_jh_version {
     static final boolean ASC = true;
 
     public static void main(String[] args) throws IOException {
@@ -29,61 +31,67 @@ public class QuickSort_jh_version {
         printArr(arr);
         System.out.println();
 
-        quickSort(arr, 0, arr.length-1, order);
+        mergeSort(arr, 0, arr.length-1, order);
     }
 
-    private static void quickSort(int[] arr, int start, int end, boolean order) {
-        if (start >= end) {
+    private static void mergeSort(int[] arr, int start, int end, boolean order) {
+        if (start == end) {
             return;
         }
 
-        int pivot = start;
-        int pivotIdx;
+        System.out.printf("[IN] start : %d, end : %d\n", start, end);
+
+        int mid = (start + end) / 2;
+        mergeSort(arr, start, mid, order);
+        mergeSort(arr, mid + 1, end, order);
         if (order == ASC) {
-            pivotIdx = partitionAsc(arr, start, end);
+            mergeAsc(arr, start, mid, end);
         } else {
-            pivotIdx = partitionDesc(arr, start, end);
+            mergeDesc(arr, start, mid, end);
         }
-        quickSort(arr, start, pivotIdx-1, order);
-        quickSort(arr, pivotIdx+1, end, order);
-
-
         System.out.printf("[OUT] start : %d, end : %d\n", start, end);
         printArr(arr, start, end);
     }
 
-    private static int partitionAsc(int[] arr, int start, int end) {
-        int pivot = arr[start];
-        int pointer = start + 1;
-        int pivotIdx = start;
+    private static void mergeAsc(int[] arr, int start, int mid, int end) {
+        // 1. 임시 배열 공간을 만든다.
+        // 2-1. 왼쪽 배열 : start ~ mid
+        // 2-2. 오른쪽 배열 : mid + 1 ~ end
+        // 3. 한쪽 배열의 원소를 모두 볼 때까지 왼쪽 배열과 오른쪽 배열의 왼쪽 인덱스부터 비교해가며 작은 쪽을 순서대로 임시배열에 담는다.
+        // 4. 왼쪽 배열에 아직 안 본 원소가 남아 있다면 모두 임시배열에 넣는다.
+        // 5. 왼쪽 배열에 아직 안 본 원소가 남아 있다면 모두 임시배열에 넣는다.
+        // 6. 임시배열을 원래 배열에 복사한다.
 
+        // 1.
+        int[] temp = new int[end - start + 1];
+        int idx = 0;
 
-        while (pointer <= end) {
-            if (arr[pointer] < pivot) {
-                swap(arr, ++pivotIdx, pointer);
+        // 2-1.
+        int left = start;
+        // 2-2.
+        int right = mid + 1;
+
+        // 3.
+        while (left <= mid && right <= end) {
+            if (arr[left] <= arr[right]) {
+                temp[idx++] = arr[left++];
+            } else {
+                temp[idx++] = arr[right++];
             }
-            pointer++;
         }
 
-        swap(arr, start, pivotIdx);
-        return pivotIdx;
-    }
-
-    private static int partitionDesc(int[] arr, int start, int end) {
-        int pivot = arr[start];
-        int pointer = start + 1;
-        int pivotIdx = start;
-
-
-        while (pointer <= end) {
-            if (arr[pointer] > pivot) {
-                swap(arr, ++pivotIdx, pointer);
-            }
-            pointer++;
+        // 4.
+        while (left <= mid) {
+            temp[idx++] = arr[left++];
         }
 
-        swap(arr, start, pivotIdx);
-        return pivotIdx;
+        // 5.
+        while (right <= end) {
+            temp[idx++] = arr[right++];
+        }
+
+        // 6.
+        System.arraycopy(temp, 0, arr, start, end - start + 1);
     }
 
     private static void mergeDesc(int[] arr, int start, int mid, int end) {
@@ -117,12 +125,6 @@ public class QuickSort_jh_version {
 
         // 6.
         System.arraycopy(temp, 0, arr, start, end - start + 1);
-    }
-
-    public static void swap(int[] arr, int i, int j) {
-        int temp = arr[i];
-        arr[i] = arr[j];
-        arr[j] = temp;
     }
 
     private static void printArr(int[] arr) {

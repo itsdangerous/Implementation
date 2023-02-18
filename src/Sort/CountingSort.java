@@ -1,3 +1,5 @@
+package Sort;
+
 public class CountingSort {
     private int[] arr;
     private int n; // 배열 길이

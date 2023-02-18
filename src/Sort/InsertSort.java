@@ -1,3 +1,5 @@
+package Sort;
+
 public class InsertSort {
     private int[] arr;
     private int n; // arr.length
